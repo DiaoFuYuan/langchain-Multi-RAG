@@ -1,0 +1,13 @@
+{
+    "knowledge_bases": [
+        {
+            "id": 1,
+            "name": "PMS",
+            "description": "",
+            "create_time": "2025-06-14T23:14:53.643963",
+            "embedding_model": "gte_Qwen2-15B-instruct",
+            "embedding_model_id": 18,
+            "status": "active"
+        }
+    ]
+}
