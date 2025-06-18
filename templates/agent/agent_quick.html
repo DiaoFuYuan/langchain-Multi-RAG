@@ -1,0 +1,229 @@
+{% extends "common/base.html" %}
+
+{% block title %}快捷智能体管理{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', path='/css/agent/agent_quick.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="agent-container">
+    <div class="agent-main-card">
+        <!-- 头部 -->
+        <div class="agent-header">
+            <div class="agent-header-top">
+                <h1 class="agent-title">快捷智能体</h1>
+                <div class="agent-header-actions">
+                    <div class="agent-search">
+                        <input type="text" placeholder="搜索智能体名称或描述..." id="searchInput">
+                    </div>
+                    <button class="agent-create-btn" id="createAgentBtn">
+                        <i class="fas fa-plus"></i>
+                        新建智能体
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 分类标签 -->
+            <div class="agent-tabs">
+                <button class="agent-tab active" data-category="all">全部</button>
+                <button class="agent-tab" data-category="personal">我的智能体</button>
+                <button class="agent-tab" data-category="public">公共智能体</button>
+                <button class="agent-tab" data-category="favorite">收藏</button>
+            </div>
+        </div>
+        
+        <!-- 内容区 -->
+        <div class="agent-content">
+            <!-- 智能体表格 -->
+            <div class="agent-table">
+                <!-- 表格头部 -->
+                <div class="agent-table-header">
+                    <div class="agent-col">名称</div>
+                    <div class="agent-col">描述</div>
+                    <div class="agent-col">分类</div>
+                    <div class="agent-col">状态</div>
+                    <div class="agent-col">更新时间</div>
+                    <div class="agent-col">操作</div>
+                </div>
+                
+                <!-- 表格内容 -->
+                <div class="agent-table-body" id="agentTableBody">
+                    <!-- 加载状态 -->
+                    <div class="agent-loading" id="loadingState">
+                        <i class="fas fa-spinner fa-spin agent-loading-spinner"></i>
+                        <span class="agent-loading-text">正在加载智能体...</span>
+                    </div>
+                    
+                    <!-- 空状态 -->
+                    <div class="agent-empty-state" id="emptyState" style="display: none;">
+                        <i class="fas fa-robot agent-empty-icon"></i>
+                        <h3>还没有智能体</h3>
+                        <p>创建您的第一个智能体开始体验吧</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 分页 -->
+        <div class="agent-footer">
+            <div class="agent-pagination">
+                <span class="agent-page-info" id="pageInfo">共 0 个智能体</span>
+                <div class="agent-page-controls">
+                    <button class="agent-page-btn" id="prevPageBtn" onclick="changePage(-1)">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <span class="agent-page-current" id="currentPage">1</span>
+                    <button class="agent-page-btn" id="nextPageBtn" onclick="changePage(1)">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    <div class="agent-page-goto">
+                        跳转到
+                        <input type="number" class="agent-page-input" id="gotoPageInput" value="1" min="1" max="1">
+                        页
+                    </div>
+                    <span class="agent-page-total" id="totalPages">共 1 页</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 创建智能体模态框 -->
+<div class="agent-modal" id="createAgentModal">
+    <div class="agent-modal-content agent-create-modal">
+        <div class="agent-modal-header">
+            <h3 class="agent-modal-title">
+                <i class="fas fa-robot"></i>
+                创建快捷智能体
+            </h3>
+            <button class="agent-modal-close" onclick="closeModal('createAgentModal')">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="agent-modal-body">
+            <form id="createAgentForm">
+                <!-- 取个名字 -->
+                <div class="agent-form-group">
+                    <label class="agent-form-label">取个名字</label>
+                    <div class="agent-form-input-wrapper">
+                        <i class="fas fa-robot agent-form-icon"></i>
+                        <input type="text" class="agent-form-input" name="name" placeholder="请输入智能体名称" required>
+                    </div>
+                </div>
+
+                <!-- 智能体介绍 -->
+                <div class="agent-form-group">
+                    <label class="agent-form-label">智能体介绍</label>
+                    <textarea class="agent-form-textarea" name="description" placeholder="请描述这个智能体的功能和用途" rows="3"></textarea>
+                </div>
+
+                <!-- 问题描述 -->
+                <div class="agent-form-row">
+                    <div class="agent-form-col">
+                        <div class="agent-form-group">
+                            <label class="agent-form-label">
+                                问题描述
+                                <span class="agent-form-help" data-tooltip="请详细描述该智能体要解决的问题或用户可能遇到的需求，例如：消息的格式、风格、包含的信息等。">
+                                    <i class="fas fa-question-circle"></i>
+                                    <span class="help-text">?</span>
+                                </span>
+                            </label>
+                            <textarea class="agent-form-textarea" name="problem_description" placeholder="描述用户可能遇到的问题..." rows="4"></textarea>
+                        </div>
+                    </div>
+                    <div class="agent-form-col">
+                        <div class="agent-form-group">
+                            <label class="agent-form-label">
+                                回答描述
+                                <span class="agent-form-help" data-tooltip="请详细描述智能体应该如何回答用户问题，包括回答的风格、语调、结构等要求。">
+                                    <i class="fas fa-question-circle"></i>
+                                    <span class="help-text">?</span>
+                                </span>
+                            </label>
+                            <textarea class="agent-form-textarea" name="answer_description" placeholder="描述智能体应该如何回答..." rows="4"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 从模板中选择 -->
+                <div class="agent-form-group">
+                    <label class="agent-form-label">从模板中选择</label>
+                    <div class="agent-template-grid">
+                        <div class="agent-template-card" data-template="simple">
+                            <div class="agent-template-icon">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="agent-template-content">
+                                <h4>简易机器人</h4>
+                                <p>一个极其简单的AI智能体，你可以像定制知识库或工具</p>
+                            </div>
+                        </div>
+                        
+                        <div class="agent-template-card" data-template="multi-agent">
+                            <div class="agent-template-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="agent-template-content">
+                                <h4>多智能体自主协同</h4>
+                                <p>可以选择多个智能体组成复合智能体，智能体之间可以按照知识库的用户进行任务协同工作，完成用户下达的指令和任务</p>
+                            </div>
+                        </div>
+                        
+                        <div class="agent-template-card" data-template="chat-guide">
+                            <div class="agent-template-icon">
+                                <i class="fas fa-comments"></i>
+                            </div>
+                            <div class="agent-template-content">
+                                <h4>对话引导 + 变量</h4>
+                                <p>可以在对话开始给发送一段提示，或者上用户填写一些内容，作为充分对话的基础</p>
+                            </div>
+                        </div>
+                        
+                        <div class="agent-template-card" data-template="knowledge-time">
+                            <div class="agent-template-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="agent-template-content">
+                                <h4>知道时间的机器人</h4>
+                                <p>通过连接时间插件，让模型获得当前最新时间</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="agent-modal-footer">
+            <button type="button" class="agent-btn agent-btn-cancel" onclick="closeModal('createAgentModal')">关闭</button>
+            <button type="button" class="agent-btn agent-btn-primary" onclick="createAgent()">确认创建</button>
+        </div>
+    </div>
+</div>
+
+<!-- 删除确认模态框 -->
+<div class="agent-modal" id="deleteAgentModal">
+    <div class="agent-modal-content">
+        <div class="agent-modal-header">
+            <h3 class="agent-modal-title">
+                <i class="fas fa-exclamation-triangle" style="color: #f56565;"></i>
+                确认删除
+            </h3>
+            <button class="agent-modal-close" onclick="closeModal('deleteAgentModal')">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="agent-modal-body">
+            <p>确定要删除智能体 "<span id="deleteAgentName"></span>" 吗？</p>
+            <p style="color: #f56565; font-size: 14px;">此操作不可恢复！</p>
+        </div>
+        <div class="agent-modal-footer">
+            <button type="button" class="agent-btn" onclick="closeModal('deleteAgentModal')">取消</button>
+            <button type="button" class="agent-btn agent-btn-danger" onclick="confirmDeleteAgent()">删除</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', path='/js/agent/agent_quick.js') }}"></script>
+{% endblock %} 

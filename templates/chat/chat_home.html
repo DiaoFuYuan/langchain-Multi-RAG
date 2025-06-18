@@ -1,0 +1,338 @@
+{% extends "common/base.html" %}
+
+{% block title %}智能体平台 - 通用对话{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', path='/css/chat/simple_chat.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', path='/css/chat/markdown.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', path='/css/chat/rag_sidebar.css') }}">
+<link rel="stylesheet" href="{{ url_for('fontawesome', path='/css/all.min.css') }}">
+{% endblock %}
+
+{% block content %}
+<!-- 聊天主界面 -->
+<div class="chat-container">
+    <!-- 简洁的聊天界面 -->
+    <div class="simple-chat-container" id="simpleChatContainer">
+        <!-- 主聊天区域 -->
+        <div class="main-chat-area" id="mainChatArea">
+            <!-- 简化的聊天头部 -->
+            <div class="simple-chat-header">
+                <div class="chat-status-info">
+                    <div class="ai-status">
+                        <i class="fas fa-circle status-dot"></i>
+                        <span class="status-text">AI助手在线</span>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="refresh-btn" title="重新开始对话">
+                        <i class="fas fa-sync-alt"></i> 新对话
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 聊天消息区域 -->
+            <div class="simple-chat-messages" id="chatMessages">
+                <!-- 消息将在这里动态添加 -->
+            </div>
+            
+            <!-- 侧边栏展开/收缩按钮 -->
+            <button class="sidebar-toggle-btn" id="expandBtn" onclick="toggleSidePanel()" title="展开侧边页">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            
+            <!-- RAG配置侧边栏切换按钮 -->
+            <button class="rag-sidebar-toggle-btn" id="ragSidebarToggleBtn" title="展开RAG配置">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+            
+            <!-- 聊天输入区域 -->
+            <div class="simple-chat-input">
+                <div class="input-container">
+                    <!-- 知识库问答开关 -->
+                    <div class="rag-toggle-container">
+                        <div class="rag-toggle-switch">
+                            <input type="checkbox" id="ragToggleSwitch" class="rag-toggle-input">
+                            <label for="ragToggleSwitch" class="rag-toggle-label">
+                                <span class="rag-toggle-slider"></span>
+                            </label>
+                            <span class="rag-toggle-text">
+                                <i class="fas fa-chain-broken"></i>
+                                <span id="ragToggleText">启用知识库问答</span>
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- 输入框和操作按钮容器 -->
+                    <div class="input-field-actions-container">
+                        <div class="input-field">
+                            <textarea id="userInput" placeholder="随时输入你的问题，可使用联网搜索获取最新信息" rows="1"></textarea>
+                        </div>
+                        <div class="input-actions">
+                            <button class="action-btn" onclick="toggleNetwork()" title="联网搜索">
+                                <i class="fas fa-globe"></i>
+                            </button>
+                            <button class="action-btn" onclick="toggleAttachment()" title="附件">
+                                <i class="fas fa-paperclip"></i>
+                            </button>
+                            <button class="action-btn" onclick="toggleModelSelector()" title="模型设置" id="modelSettingsBtn">
+                                <i class="fas fa-cog"></i>
+                            </button>
+                            <!-- 模型配置下拉框 -->
+                            <div class="model-config-dropdown" id="modelConfigDropdown">
+                                <div class="dropdown-header">
+                                    <i class="fas fa-robot"></i>
+                                    <span>选择AI模型</span>
+                                </div>
+                                <div class="model-options" id="modelOptions">
+                                    <!-- 模型选项将在这里动态生成 -->
+                                </div>
+                            </div>
+                            <button class="send-btn" onclick="sendMessage()" title="发送">
+                                <i class="fas fa-arrow-up"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 原有的侧边页 -->
+        <div class="side-panel" id="sidePanel">
+            <div class="side-panel-header">
+                <div class="side-panel-title">
+                    <i class="fas fa-tools"></i>
+                    <span>配置面板</span>
+                </div>
+                <button class="side-panel-close" onclick="toggleSidePanel()" title="收起侧边页">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="side-panel-content">
+                <h3><i class="fas fa-history"></i> 聊天历史</h3>
+                <div class="chat-history-list">
+                    <div class="history-item">
+                        <i class="fas fa-comment"></i>
+                        <span>今天的对话</span>
+                    </div>
+                    <div class="history-item">
+                        <i class="fas fa-comment"></i>
+                        <span>昨天的对话</span>
+                    </div>
+                </div>
+                
+                <h3><i class="fas fa-cog"></i> 设置选项</h3>
+                <div class="settings-options">
+                    <div class="setting-item">
+                        <label><i class="fas fa-thermometer-half"></i> AI温度设置</label>
+                        <div class="temperature-control">
+                            <input type="range" id="temperatureSlider" min="0.1" max="1.0" step="0.1" value="0.7">
+                            <span id="temperatureValue">0.7</span>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <label><i class="fas fa-edit"></i> 系统提示词</label>
+                        <textarea id="promptTextarea" placeholder="输入自定义系统提示词..." rows="10"></textarea>
+                    </div>
+                    <div class="setting-item">
+                        <label><i class="fas fa-robot"></i> 模型选择</label>
+                        <select id="modelSelect">
+                            <option value="">加载中...</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- 设置操作按钮 -->
+                <div class="settings-actions">
+                    <button class="settings-btn cancel-btn" onclick="cancelSettings()">
+                        <i class="fas fa-times"></i>
+                        取消
+                    </button>
+                    <button class="settings-btn save-btn" onclick="saveSettings()">
+                        <i class="fas fa-check"></i>
+                        保存应用
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- RAG配置侧边页 -->
+        <div class="rag-side-panel" id="ragSidePanel">
+            <div class="rag-side-panel-header">
+                <div class="rag-side-panel-title">
+                    <i class="fas fa-cogs"></i>
+                    <span>RAG配置与管理</span>
+                </div>
+                <button class="rag-side-panel-close" id="ragSidePanelClose" title="收起面板">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="rag-side-panel-content">
+                <!-- RAG配置设置 -->
+                <div class="rag-panel-section">
+                    <div class="rag-settings-options">
+                        <!-- 基础检索配置 -->
+                        <div class="rag-config-group">
+                            <h4><i class="fas fa-search"></i> 检索配置</h4>
+                            <div class="rag-setting-item">
+                                <label>检索数量 (Top-K)</label>
+                                <div class="rag-threshold-control">
+                                    <input type="range" id="ragTopKSlider" min="1" max="20" step="1" value="10">
+                                    <span id="ragTopKValue">10</span>
+                                </div>
+                            </div>
+                            <div class="rag-setting-item">
+                                <label>相似度阈值</label>
+                                <div class="rag-threshold-control">
+                                    <input type="range" id="ragThresholdSlider" min="0.1" max="1.0" step="0.1" value="0.3">
+                                    <span id="ragThresholdValue">0.3</span>
+                                </div>
+                            </div>
+                            <div class="rag-setting-item">
+                                <label>上下文窗口大小</label>
+                                <div class="rag-threshold-control">
+                                    <input type="range" id="ragContextWindowSlider" min="0" max="500" step="50" value="150">
+                                    <span id="ragContextWindowValue">150</span>
+                                </div>
+                            </div>
+                            <div class="rag-setting-item">
+                                <label>关键词匹配阈值</label>
+                                <div class="rag-threshold-control">
+                                    <input type="range" id="ragKeywordThresholdSlider" min="1" max="5" step="1" value="1">
+                                    <span id="ragKeywordThresholdValue">1</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 增强功能配置 -->
+                        <div class="rag-config-group">
+                            <h4><i class="fas fa-magic"></i> 增强功能</h4>
+                            <div class="rag-setting-item">
+                                <label>上下文增强</label>
+                                <div class="rag-checkbox-control">
+                                    <input type="checkbox" id="ragContextEnrichmentCheckbox" checked>
+                                    <span class="checkbox-label">启用上下文增强</span>
+                                </div>
+                            </div>
+                            <div class="rag-setting-item">
+                                <label>相关性排序</label>
+                                <div class="rag-checkbox-control">
+                                    <input type="checkbox" id="ragRankingCheckbox" checked>
+                                    <span class="checkbox-label">启用相关性排序</span>
+                                </div>
+                            </div>
+                            <div class="rag-setting-item">
+                                <label>重排序设置</label>
+                                <div class="rag-checkbox-control">
+                                    <input type="checkbox" id="ragRerankCheckbox" checked>
+                                    <span class="checkbox-label">启用重排序</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 生成器配置 -->
+                        <div class="rag-config-group">
+                            <h4><i class="fas fa-robot"></i> 生成器配置</h4>
+                            <div class="rag-setting-item">
+                                <label>生成温度</label>
+                                <div class="rag-threshold-control">
+                                    <input type="range" id="ragTemperatureSlider" min="0.0" max="1.0" step="0.1" value="0.3">
+                                    <span id="ragTemperatureValue">0.3</span>
+                                </div>
+                            </div>
+                            <div class="rag-setting-item">
+                                <label>记忆窗口大小</label>
+                                <div class="rag-threshold-control">
+                                    <input type="range" id="ragMemoryWindowSlider" min="1" max="20" step="1" value="5">
+                                    <span id="ragMemoryWindowValue">5</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 知识库管理操作 -->
+                <div class="rag-panel-section">
+                    <h3><i class="fas fa-database"></i> 知识库管理</h3>
+                    <div class="rag-kb-management-actions">
+                        <button class="rag-kb-action-btn" id="ragSelectKnowledgeBtn">
+                            <i class="fas fa-plus"></i> 选择知识库
+                        </button>
+                        <button class="rag-kb-action-btn" id="ragClearSelectionBtn">
+                            <i class="fas fa-times-circle"></i> 清空选择
+                        </button>
+                    </div>
+                    <div class="rag-kb-selected-count" id="ragKbSelectedCount">
+                        已选择 0 个知识库
+                    </div>
+                </div>
+                
+                <!-- 已选择的知识库列表 -->
+                <div class="rag-panel-section">
+                    <h3><i class="fas fa-check-circle"></i> 已选择知识库</h3>
+                    <div class="rag-selected-knowledge-list" id="ragSelectedKnowledgeList">
+                        <!-- 空状态 -->
+                        <div class="rag-empty-selection-state">
+                            <i class="fas fa-inbox"></i>
+                            <span>暂未选择任何知识库</span>
+                            <!-- 刁福元版权所有,转载请注明出处-->
+                            <p>点击上方"选择知识库"按钮开始选择</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- RAG系统状态 -->
+                <div class="rag-panel-section">
+                    <h3><i class="fas fa-info-circle"></i> 系统状态</h3>
+                    <div class="rag-status" id="ragStatus">
+                        <div class="rag-status-item">
+                            <span>RAG系统:</span>
+                            <span class="rag-status-indicator online" id="ragStatusIndicator">在线</span>
+                        </div>
+                        <div class="rag-status-item">
+                            <span>知识库数量:</span>
+                            <span id="ragKbCount">0</span>
+                        </div>
+                        <div class="rag-status-item">
+                            <span>向量维度:</span>
+                            <span id="ragVectorDim">768</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- RAG配置操作按钮 -->
+                <div class="rag-settings-actions">
+                    <button class="rag-settings-btn rag-cancel-btn" onclick="cancelRAGSettings()">
+                        <i class="fas fa-times"></i>
+                        取消
+                    </button>
+                    <button class="rag-settings-btn rag-save-btn" onclick="saveRAGSettings()">
+                        <i class="fas fa-check"></i>
+                        保存应用
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 删除模态框结构 -->
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', path='/js/chat/chat_home.js') }}"></script>
+<script src="{{ url_for('static', path='/js/chat/markdown.js') }}"></script>
+<script src="{{ url_for('static', path='/js/chat/rag_sidebar.js') }}"></script>
+<script>
+// 页面加载完成后设置当前页面的活动菜单项
+document.addEventListener('DOMContentLoaded', function() {
+    // 等待侧边栏管理器初始化完成
+    setTimeout(() => {
+        if (window.sidebarManager) {
+            window.sidebarManager.setActiveMenuByPage('chat');
+        }
+    }, 100);
+});
+</script>
+{% endblock %} 

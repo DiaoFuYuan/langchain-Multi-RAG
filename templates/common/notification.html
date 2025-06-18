@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>通知组件演示</title>
+    <!-- 引入本地Font Awesome图标库 -->
+    <link rel="stylesheet" href="{{ url_for('fontawesome', path='/css/all.min.css') }}">
+    <!-- 引入通知组件样式 -->
+    <link rel="stylesheet" href="{{ url_for('static', path='/css/common/notification.css') }}">
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        
+        .demo-section {
+            margin-bottom: 30px;
+        }
+        
+        h2 {
+            color: #555;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+        
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+        
+        .btn:hover {
+            opacity: 0.9;
+        }
+        
+        .btn-success {
+            background-color: #52c41a;
+            color: white;
+        }
+        
+        .btn-error {
+            background-color: #f5222d;
+            color: white;
+        }
+        
+        .btn-warning {
+            background-color: #faad14;
+            color: white;
+        }
+        
+        .btn-info {
+            background-color: #1890ff;
+            color: white;
+        }
+        
+        .btn-default {
+            background-color: #f0f0f0;
+            color: #666;
+        }
+        
+        .code-example {
+            background-color: #f5f5f5;
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 20px;
+            font-family: monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>通知组件演示</h1>
+        
+        <div class="demo-section">
+            <h2>基本用法</h2>
+            <div class="btn-group">
+                <button class="btn btn-success" onclick="showSuccessNotification()">成功通知</button>
+                <button class="btn btn-error" onclick="showErrorNotification()">错误通知</button>
+                <button class="btn btn-warning" onclick="showWarningNotification()">警告通知</button>
+                <button class="btn btn-info" onclick="showInfoNotification()">信息通知</button>
+                <button class="btn btn-default" onclick="clearAllNotifications()">清除所有通知</button>
+            </div>
+            
+            <div class="code-example">
+                <pre>// 显示成功通知
+Notification.success('操作成功完成！', '成功', 3000);
+
+// 显示错误通知
+Notification.error('操作发生错误！', '错误', 3000);
+
+// 显示警告通知
+Notification.warning('请注意此操作的风险！', '警告', 3000);
+
+// 显示信息通知
+Notification.info('系统将于今晚进行维护。', '提示', 3000);
+
+// 清除所有通知
+Notification.clear();</pre>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h2>高级用法</h2>
+            <div class="btn-group">
+                <button class="btn btn-success" onclick="showCustomDurationNotification()">自定义持续时间</button>
+                <button class="btn btn-info" onclick="showWithCallbackNotification()">带回调函数</button>
+                <button class="btn btn-warning" onclick="showPermanentNotification()">不自动关闭</button>
+            </div>
+            
+            <div class="code-example">
+                <pre>// 自定义持续时间（5秒）
+Notification.success('操作成功完成！', '成功', 5000);
+
+// 带回调函数
+Notification.info('点击确定继续', '提示', 3000, function() {
+    console.log('通知已关闭');
+    alert('通知关闭了！');
+});
+
+// 不自动关闭（持续时间设为0）
+Notification.warning('这条通知不会自动关闭', '警告', 0);</pre>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 引入通知组件脚本 -->
+    <script src="{{ url_for('static', path='/js/common/notification.js') }}"></script>
+    <script>
+        // 显示成功通知
+        function showSuccessNotification() {
+            Notification.success('知识库创建成功！', '成功', 3000);
+        }
+        
+        // 显示错误通知
+        function showErrorNotification() {
+            Notification.error('操作发生错误！请稍后重试。', '错误', 3000);
+        }
+        
+        // 显示警告通知
+        function showWarningNotification() {
+            Notification.warning('请注意此操作的风险！', '警告', 3000);
+        }
+        
+        // 显示信息通知
+        function showInfoNotification() {
+            Notification.info('系统将于今晚进行维护。', '提示', 3000);
+        }
+        
+        // 显示自定义持续时间的通知
+        function showCustomDurationNotification() {
+            Notification.success('这个通知会显示5秒钟', '自定义时长', 5000);
+        }
+        
+        // 显示带回调函数的通知
+        function showWithCallbackNotification() {
+            Notification.info('点击确定继续', '提示', 3000, function() {
+                console.log('通知已关闭');
+                alert('通知关闭了！');
+            });
+        }
+        
+        // 显示不会自动关闭的通知
+        function showPermanentNotification() {
+            Notification.warning('这条通知不会自动关闭，需要手动点击关闭按钮', '长时间通知', 0);
+        }
+        
+        // 清除所有通知
+        function clearAllNotifications() {
+            Notification.clear();
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,135 @@
+/* 通知组件样式 */
+#notification-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.notification {
+    display: flex;
+    min-width: 320px;
+    max-width: 450px;
+    background-color: white;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 16px;
+    margin-bottom: 10px;
+    opacity: 0;
+    transform: translateX(30px);
+    transition: all 0.3s ease;
+    overflow: hidden;
+    position: relative;
+}
+
+.notification::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 4px;
+}
+
+.notification-show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.notification-hide {
+    opacity: 0;
+    transform: translateX(30px);
+}
+
+.notification-icon {
+    flex-shrink: 0;
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.notification-content {
+    flex: 1;
+    overflow: hidden;
+}
+
+.notification-title {
+    margin: 0 0 5px 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.notification-message {
+    margin: 0;
+    font-size: 14px;
+    color: #666;
+    line-height: 1.4;
+}
+
+.notification-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #999;
+    font-size: 14px;
+    margin-left: 10px;
+    padding: 0;
+    align-self: flex-start;
+}
+
+.notification-close:hover {
+    color: #555;
+}
+
+/* 不同类型的通知样式 */
+.notification-success::before {
+    background-color: #52c41a;
+}
+
+.notification-success .notification-icon {
+    color: #52c41a;
+}
+
+.notification-error::before {
+    background-color: #f5222d;
+}
+
+.notification-error .notification-icon {
+    color: #f5222d;
+}
+
+.notification-warning::before {
+    background-color: #faad14;
+}
+
+.notification-warning .notification-icon {
+    color: #faad14;
+}
+
+.notification-info::before {
+    background-color: #1890ff;
+}
+
+.notification-info .notification-icon {
+    color: #1890ff;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    #notification-container {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+    }
+    
+    .notification {
+        min-width: auto;
+        max-width: none;
+        width: 100%;
+    }
+} 

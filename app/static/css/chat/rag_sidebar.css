@@ -1,0 +1,1390 @@
+/* 通用对话RAG配置侧边页样式 */
+
+/* RAG配置面板特定样式 */
+.rag-side-panel {
+    width: 0;
+    background-color: #ffffff;
+    border-right: 1px solid #eaeaea;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    flex-shrink: 0;
+    opacity: 0;
+    transform: translateX(-100%);
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 10;
+}
+
+/* 容器样式（可选） */
+.rag-kb-management-actions {
+    display: flex;
+    gap: 8px; /* 按钮间距 */
+    margin-bottom: 10px;
+}
+
+/* 按钮基础样式 */
+.rag-kb-management-actions button,
+.rag-kb-action-btn {
+    flex: 1;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    text-transform: none;
+    letter-spacing: 0.2px;
+}
+
+/* 选择知识库按钮样式 */
+.rag-kb-management-actions button:first-child,
+#ragSelectKnowledgeBtn {
+    background: #2467c6;
+    color: white;
+    border: 2px solid transparent;
+}
+
+/* 清空选择按钮样式 */
+.rag-kb-management-actions button:last-child,
+#ragClearSelectionBtn {
+    background: #b9bdc4;
+    color: #495057;
+    border: 2px solid #dee2e6;
+}
+
+/* 按钮悬停效果 */
+.rag-kb-management-actions button:first-child:hover,
+#ragSelectKnowledgeBtn:hover {
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4c93 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25);
+}
+
+.rag-kb-management-actions button:last-child:hover,
+#ragClearSelectionBtn:hover {
+    background: linear-gradient(135deg, #cecfd0 0%, #dee2e6 100%);
+    color: #343a40;
+    border-color: #adb5bd;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+/* 按钮按下效果 */
+.rag-kb-management-actions button:active,
+.rag-kb-action-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+
+/* 按钮图标样式 */
+.rag-kb-management-actions button i,
+.rag-kb-action-btn i {
+    font-size: 11px;
+    transition: transform 0.3s ease;
+}
+
+.rag-kb-management-actions button:hover i,
+.rag-kb-action-btn:hover i {
+    transform: scale(1.1);
+}
+
+/* 按钮光泽效果 */
+.rag-kb-management-actions button::before,
+.rag-kb-action-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.rag-kb-management-actions button:hover::before,
+.rag-kb-action-btn:hover::before {
+    left: 100%;
+}
+
+/* 禁用状态样式 */
+.rag-kb-management-actions button:disabled,
+.rag-kb-action-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+.rag-kb-management-actions button:disabled::before,
+.rag-kb-action-btn:disabled::before {
+    display: none;
+}
+
+.simple-chat-container.rag-expanded .rag-side-panel {
+    width: 320px;
+    opacity: 1;
+    transform: translateX(0);
+    transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.simple-chat-container.rag-expanded .main-chat-area {
+    margin-left: 320px;
+    transition: margin-left 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* 确保收缩时主聊天区域也有平滑过渡 */
+.main-chat-area {
+    transition: margin-left 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.rag-side-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: #2467c6;
+    color: white;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    min-height: 48px;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.simple-chat-container.rag-expanded .rag-side-panel-header {
+    opacity: 1;
+    transform: translateX(0);
+    transition: opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.1s, 
+                transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.1s;
+}
+
+.rag-side-panel-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: white;
+}
+
+.rag-side-panel-title i {
+    color: white;
+}
+
+.rag-side-panel-close {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    color: rgba(255, 255, 255, 0.8);
+    transition: all 0.2s ease;
+}
+
+.rag-side-panel-close:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.rag-side-panel-content {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.simple-chat-container.rag-expanded .rag-side-panel-content {
+    opacity: 1;
+    transform: translateX(0);
+    transition: opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.15s, 
+                transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.15s;
+}
+
+.rag-panel-section {
+    margin-bottom: 24px;
+}
+
+.rag-panel-section h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0 0 12px 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #eaeaea;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.rag-panel-section h3 i {
+    color: #667eea;
+}
+
+/* RAG配置选项 */
+.rag-settings-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* RAG配置分组 - 移除卡片样式 */
+.rag-config-group {
+    margin-bottom: 16px;
+    transition: all 0.3s ease;
+}
+
+.rag-config-group:hover {
+    /* 移除悬停效果 */
+}
+
+.rag-config-group h4 {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: rgb(102, 126, 234);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.rag-config-group h4 i {
+    font-size: 14px;
+    color: rgb(102, 126, 234);
+}
+
+.rag-config-group .rag-setting-item {
+    margin-bottom: 12px;
+}
+
+.rag-config-group .rag-setting-item:last-child {
+    margin-bottom: 0;
+}
+
+/* RAG设置选项样式 */
+.rag-setting-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 4px 0;
+}
+
+.rag-setting-item label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 2px;
+}
+
+/* RAG阈值控制样式 */
+.rag-threshold-control {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.rag-threshold-control input[type="range"] {
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    background: #ddd;
+    outline: none;
+}
+
+.rag-threshold-control input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #667eea;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.rag-threshold-control input[type="range"]::-webkit-slider-thumb:hover {
+    background: #5a6fd8;
+    transform: scale(1.1);
+}
+
+.rag-threshold-control input[type="range"]::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #667eea;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.rag-threshold-control input[type="range"]::-moz-range-thumb:hover {
+    background: #5a6fd8;
+    transform: scale(1.1);
+}
+
+.rag-threshold-control span {
+    font-size: 12px;
+    font-weight: 500;
+    color: #667eea;
+    min-width: 20px;
+    text-align: center;
+}
+
+/* RAG复选框控制样式 */
+.rag-checkbox-control {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.rag-checkbox-control input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+    accent-color: #667eea;
+}
+
+.rag-checkbox-control .checkbox-label {
+    font-size: 12px;
+    color: #555;
+    cursor: pointer;
+}
+
+/* RAG知识库管理样式 */
+.rag-knowledge-management {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.rag-kb-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.rag-kb-btn {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #667eea;
+    border-radius: 6px;
+    background: white;
+    color: #667eea;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+.rag-kb-btn:hover {
+    background: #667eea;
+    color: white;
+}
+
+.rag-kb-btn.primary {
+    background: #667eea;
+    color: white;
+}
+
+.rag-kb-btn.primary:hover {
+    background: #5a6fd8;
+}
+
+/* 已选择知识库计数器样式 */
+.rag-kb-selected-count {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    margin-top: 6px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #495057;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.rag-kb-selected-count::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: left 0.5s ease;
+}
+
+.rag-kb-selected-count:hover::before {
+    left: 100%;
+}
+
+.rag-kb-selected-count:hover {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    border-color: #2196f3;
+    color: #1976d2;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(33, 150, 243, 0.12);
+}
+
+/* 当有选择时的样式 */
+.rag-kb-selected-count.has-selection {
+    background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
+    border-color: #4caf50;
+    color: #2e7d32;
+}
+
+.rag-kb-selected-count.has-selection:hover {
+    background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%);
+    border-color: #388e3c;
+    color: #1b5e20;
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.15);
+}
+
+/* 添加图标样式 */
+.rag-kb-selected-count::after {
+    content: '\f0c9';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    margin-left: 6px;
+    opacity: 0.6;
+    transition: all 0.3s ease;
+    font-size: 10px;
+}
+
+.rag-kb-selected-count.has-selection::after {
+    content: '\f00c';
+    color: #4caf50;
+    opacity: 0.8;
+}
+
+.rag-kb-selected-count:hover::after {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.rag-selected-knowledge {
+    max-height: 120px;
+    overflow-y: auto;
+    border: 1px solid #eaeaea;
+    border-radius: 6px;
+    padding: 8px;
+    background: #f8f9fa;
+}
+
+.rag-selected-knowledge.empty {
+    text-align: center;
+    color: #999;
+    font-size: 12px;
+    padding: 16px 8px;
+}
+
+.rag-kb-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 8px;
+    background: white;
+    border-radius: 4px;
+    margin-bottom: 4px;
+    font-size: 12px;
+    border: 1px solid #e0e0e0;
+}
+
+.rag-kb-item:last-child {
+    margin-bottom: 0;
+}
+
+.rag-kb-item-name {
+    flex: 1;
+    color: #333;
+    font-weight: 500;
+}
+
+.rag-kb-item-remove {
+    background: none;
+    border: none;
+    color: #999;
+    cursor: pointer;
+    padding: 2px;
+    border-radius: 2px;
+    transition: all 0.2s ease;
+}
+
+.rag-kb-item-remove:hover {
+    color: #ff4757;
+    background: #ffe0e0;
+}
+
+/* RAG状态显示样式 */
+.rag-status {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.rag-status-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: #555;
+}
+
+.rag-status-indicator {
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.rag-status-indicator.online {
+    background: #d4edda;
+    color: #155724;
+}
+
+.rag-status-indicator.offline {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.rag-status-indicator.loading {
+    background: #fff3cd;
+    color: #856404;
+}
+
+/* RAG侧边栏切换按钮样式 */
+.rag-sidebar-toggle-btn {
+    position: absolute;
+    top: 50%;
+    left: -15px;
+    transform: translateY(-50%);
+    width: 35px;
+    height: 60px;
+    background: #f8f8f8ed;
+    border: 1px solid #398aee;
+    border-radius: 14px;
+    color: #398aee;
+    font-size: 16px;
+    cursor: pointer;
+    z-index: 1000;
+    transition: all 0.3s ease, left 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.rag-sidebar-toggle-btn:hover {
+    background: #f5f5f5;
+    border-color: #2196f3;
+    color: #2196f3;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-50%) scale(1.05);
+}
+
+.rag-sidebar-toggle-btn:active {
+    transform: translateY(-50%) scale(0.95);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    color: #1976d2;
+}
+
+/* 当RAG侧边栏展开时，按钮样式调整 */
+.simple-chat-container.rag-expanded .rag-sidebar-toggle-btn {
+    left: -12px;
+    color: #398aee;
+    transition: all 0.3s ease, left 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.simple-chat-container.rag-expanded .rag-sidebar-toggle-btn:hover {
+    transform: translateY(-50%) scale(1.05);
+    color: #2196f3;
+}
+
+/* 箭头图标旋转动画 */
+.rag-sidebar-toggle-btn i {
+    transition: transform 0.3s ease;
+}
+
+.simple-chat-container.rag-expanded .rag-sidebar-toggle-btn i {
+    transform: rotate(180deg);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .simple-chat-container.rag-expanded .rag-side-panel {
+        width: 100vw;
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 1000;
+    }
+    
+    .simple-chat-container.rag-expanded .main-chat-area {
+        margin-left: 0;
+    }
+    
+    .rag-sidebar-toggle-btn {
+        width: 35px;
+        height: 35px;
+        font-size: 14px;
+        left: -17px;
+    }
+    
+    .simple-chat-container.rag-expanded .rag-sidebar-toggle-btn {
+        left: -12px;
+    }
+    
+    .rag-kb-management-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .rag-kb-management-actions button,
+    .rag-kb-action-btn {
+        padding: 10px 14px;
+        font-size: 12px;
+    }
+}
+
+/* 已选择知识库列表样式 */
+.rag-selected-knowledge-list {
+    min-height: 200px;
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    background: #ffffff;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.rag-selected-knowledge-list:hover {
+    border-color: #667eea;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+}
+
+/* 空状态样式 */
+.rag-empty-selection-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+    text-align: center;
+    color: #6c757d;
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+.rag-empty-selection-state::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 20%, rgba(102, 126, 234, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.rag-empty-selection-state i {
+    font-size: 32px;
+    color: #adb5bd;
+    margin-bottom: 12px;
+    opacity: 0.8;
+    transition: all 0.3s ease;
+}
+
+.rag-empty-selection-state:hover i {
+    color: #667eea;
+    transform: scale(1.1);
+    opacity: 1;
+}
+
+.rag-empty-selection-state span {
+    font-size: 14px;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 8px;
+    position: relative;
+    z-index: 1;
+}
+
+.rag-empty-selection-state p {
+    font-size: 12px;
+    color: #6c757d;
+    margin: 0;
+    line-height: 1.4;
+    position: relative;
+    z-index: 1;
+    opacity: 0.8;
+}
+
+/* 知识库项目样式 */
+.rag-kb-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    margin: 6px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    font-size: 12px;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    overflow: hidden;
+}
+
+.rag-kb-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    transform: scaleY(0);
+    transition: transform 0.3s ease;
+}
+
+.rag-kb-item:hover::before {
+    transform: scaleY(1);
+}
+
+.rag-kb-item:hover {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-color: #667eea;
+    transform: translateX(2px);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
+}
+
+.rag-kb-item:last-child {
+    margin-bottom: 6px;
+}
+
+.rag-kb-item-name {
+    flex: 1;
+    color: #495057;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.rag-kb-item-name::before {
+    content: '\f02d';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    color: #667eea;
+    font-size: 10px;
+    opacity: 0.7;
+}
+
+.rag-kb-item-remove {
+    background: none;
+    border: none;
+    color: #adb5bd;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+}
+
+.rag-kb-item-remove:hover {
+    color: #dc3545;
+    background: rgba(220, 53, 69, 0.1);
+    transform: scale(1.1);
+}
+
+.rag-kb-item-remove i {
+    font-size: 10px;
+}
+
+/* 滚动条样式 */
+.rag-selected-knowledge-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.rag-selected-knowledge-list::-webkit-scrollbar-track {
+    background: #f1f3f4;
+    border-radius: 2px;
+}
+
+.rag-selected-knowledge-list::-webkit-scrollbar-thumb {
+    background: #667eea;
+    border-radius: 2px;
+    transition: background 0.3s ease;
+}
+
+.rag-selected-knowledge-list::-webkit-scrollbar-thumb:hover {
+    background: #5a6fd8;
+}
+
+/* 知识库问答开关样式 */
+.rag-toggle-container {
+    padding: 0px 0;
+    margin-bottom: 0px;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+}
+
+.rag-toggle-container:hover {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+/* 输入容器整体布局 */
+.input-container {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+}
+
+/* 输入框和操作按钮容器样式 */
+.input-field-actions-container {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    background: #ffffff;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    padding: 1px 8px;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.input-field-actions-container:hover {
+    border-color: #667eea;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+}
+
+.input-field-actions-container:focus-within {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.input-field-actions-container .input-field {
+    flex: 1;
+    margin: 0;
+}
+
+.input-field-actions-container .input-field textarea {
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    padding: 8px 0;
+    margin: 0;
+    width: 100%;
+    resize: none;
+}
+
+.input-field-actions-container .input-field textarea:focus {
+    outline: none;
+    border: none;
+    box-shadow: none;
+}
+
+.input-field-actions-container .input-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.rag-toggle-switch {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 4px 8px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    font-size: 12px;
+}
+
+.rag-toggle-switch:hover {
+    background: linear-gradient(135deg, #e3f2fd 0%, #f8f9fa 100%);
+    border-color: #667eea;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+}
+
+.rag-toggle-input {
+    display: none;
+}
+
+.rag-toggle-label {
+    position: relative;
+    width: 36px;
+    height: 20px;
+    background: #ccc;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+}
+
+.rag-toggle-slider {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    background: white;
+    border-radius: 50%;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.rag-toggle-input:checked + .rag-toggle-label {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 0 2px rgba(102, 126, 234, 0.2);
+}
+
+.rag-toggle-input:checked + .rag-toggle-label .rag-toggle-slider {
+    transform: translateX(16px);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.rag-toggle-text {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #495057;
+    transition: color 0.3s ease;
+    user-select: none;
+    white-space: nowrap;
+}
+
+.rag-toggle-input:checked ~ .rag-toggle-text {
+    color: #667eea;
+}
+
+.rag-toggle-text i {
+    font-size: 12px;
+    color: #6c757d;
+    transition: all 0.3s ease;
+}
+
+.rag-toggle-input:checked ~ .rag-toggle-text i {
+    color: #667eea;
+    transform: scale(1.1);
+}
+
+/* 开关激活时的动画效果 */
+.rag-toggle-label:hover {
+    transform: scale(1.05);
+}
+
+.rag-toggle-label:active {
+    transform: scale(0.95);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .rag-toggle-container {
+        padding: 3px 0;
+        margin-bottom: 3px;
+    }
+    
+    .rag-toggle-switch {
+        gap: 6px;
+        padding: 3px 6px;
+        font-size: 11px;
+    }
+    
+    .rag-toggle-text {
+        font-size: 11px;
+    }
+    
+    .rag-toggle-text i {
+        font-size: 11px;
+    }
+    
+    .rag-toggle-label {
+        width: 32px;
+        height: 18px;
+    }
+    
+    .rag-toggle-slider {
+        width: 14px;
+        height: 14px;
+    }
+    
+    .rag-toggle-input:checked + .rag-toggle-label .rag-toggle-slider {
+        transform: translateX(14px);
+    }
+    
+    .input-field-actions-container {
+        padding: 6px;
+        gap: 6px;
+    }
+    
+    .input-field-actions-container .input-actions {
+        gap: 3px;
+    }
+    
+    .input-container {
+        gap: 3px;
+    }
+}
+
+/* RAG配置操作按钮样式 */
+.rag-settings-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #e9ecef;
+}
+
+.rag-settings-btn {
+    flex: 1;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.rag-save-btn {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    border: 2px solid transparent;
+    box-shadow: 0 2px 6px rgba(40, 167, 69, 0.25);
+}
+
+.rag-save-btn:hover {
+    background: linear-gradient(135deg, #218838 0%, #1e7e34 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.rag-cancel-btn {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    color: #6c757d;
+    border: 2px solid #dee2e6;
+}
+
+.rag-cancel-btn:hover {
+    background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+    color: #495057;
+    border-color: #adb5bd;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.15);
+}
+
+.rag-settings-btn i {
+    font-size: 12px;
+}
+
+.rag-settings-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* RAG聊天相关样式 */
+.rag-processing-indicator {
+    background: linear-gradient(135deg, #fdcb6e, #e17055);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+    animation: rag-pulse 2s infinite;
+    box-shadow: 0 2px 8px rgba(253, 203, 110, 0.4);
+    margin-bottom: 12px;
+}
+
+.rag-processing-indicator i {
+    color: white;
+    animation: spin 2s linear infinite;
+}
+
+/* 闪烁光标动画 */
+.typing-cursor {
+    display: inline-block;
+    font-weight: 700;
+    font-size: 14px;
+    margin-left: 2px;
+    animation: cursor-blink 1s infinite;
+}
+
+@keyframes cursor-blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+}
+
+@keyframes rag-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.02); }
+}
+
+@keyframes pulse {
+    from { opacity: 0.7; }
+    to { opacity: 1; }
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.rag-source-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
+    border: 1px solid #c8e6c9;
+    border-radius: 4px;
+    font-size: 11px;
+    color: #2e7d32;
+    margin-top: 12px;
+    font-weight: 500;
+}
+
+.rag-source-indicator i {
+    color: #4caf50;
+    font-size: 10px;
+}
+
+/* RAG消息头像样式调整 */
+.simple-message .message-avatar i.fa-robot {
+    color: #667eea;
+    font-size: 18px;
+    text-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
+}
+
+/* RAG聊天机器人头像特殊样式 - 覆盖默认样式 */
+.rag-message .message-avatar,
+.simple-message.rag-chat .message-avatar {
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%) !important;
+    color: white !important;
+    border: 2px solid #4CAF50 !important;
+    box-shadow: 0 3px 12px rgba(76, 175, 80, 0.4) !important;
+    position: relative;
+}
+
+/* RAG机器人头像发光效果 */
+.rag-message .message-avatar::before,
+.simple-message.rag-chat .message-avatar::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    border-radius: 50%;
+    z-index: -1;
+    opacity: 0.3;
+    animation: rag-glow 2s ease-in-out infinite alternate;
+}
+
+/* RAG机器人图标特殊样式 */
+.rag-message .message-avatar i.fa-robot,
+.simple-message.rag-chat .message-avatar i.fa-robot {
+    color: white !important;
+    font-size: 16px !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+}
+
+@keyframes rag-glow {
+    0% {
+        transform: scale(1);
+        opacity: 0.3;
+    }
+    100% {
+        transform: scale(1.1);
+        opacity: 0.6;
+    }
+}
+
+/* 空知识库状态样式 */
+.empty-knowledge-state {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.empty-icon {
+    font-size: 64px;
+    color: #9ca3af;
+    margin-bottom: 20px;
+}
+
+.empty-message h4 {
+    font-size: 18px;
+    color: #374151;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.empty-message p {
+    font-size: 14px;
+    color: #6b7280;
+    margin-bottom: 24px;
+    line-height: 1.5;
+}
+
+.knowledge-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.kb-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.kb-action-btn.primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.kb-action-btn.primary:hover {
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4c93 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.kb-action-btn:not(.primary) {
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #d1d5db;
+}
+
+.kb-action-btn:not(.primary):hover {
+    background: #e5e7eb;
+    border-color: #9ca3af;
+}
+
+/* 消息提示样式 */
+.rag-toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: 1px solid #e5e7eb;
+    min-width: 300px;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.rag-toast.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.toast-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+}
+
+.rag-toast-success {
+    border-left: 4px solid #10b981;
+}
+
+.rag-toast-success .toast-content i {
+    color: #10b981;
+}
+
+.rag-toast-error {
+    border-left: 4px solid #ef4444;
+}
+
+.rag-toast-error .toast-content i {
+    color: #ef4444;
+}
+
+.rag-toast-info {
+    border-left: 4px solid #3b82f6;
+}
+
+.rag-toast-info .toast-content i {
+    color: #3b82f6;
+}
+
+.toast-content span {
+    font-size: 14px;
+    color: #374151;
+    font-weight: 500;
+} 

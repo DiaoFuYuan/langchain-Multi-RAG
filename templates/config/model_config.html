@@ -1,0 +1,423 @@
+{% extends "common/base.html" %}
+
+{% block title %}模型配置{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', path='/css/config/model_config.css') }}">
+{% endblock %}
+
+{% block content %}
+<!-- 主内容区 -->
+<div class="main-content">
+    <div class="model-config-container">
+        <div class="config-header">
+            <h1>模型供应商</h1>
+            <div class="search-container">
+                <div class="search-box">
+                    <input type="text" placeholder="搜索" id="searchInput">
+                    <button class="search-btn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="config-content">
+            <!-- 待配置区域 -->
+            <h2>模型配置</h2>
+            <div class="provider-grid" id="unconfiguredProviders">
+                <!-- OpenAI -->
+                <div class="provider-card unconfigured" data-provider="openai">
+                    <div class="provider-header">
+                        <div class="provider-icon">
+                            <img src="{{ url_for('static', path='/images/config/2_openai.png') }}" alt="OpenAI">
+                        </div>
+                        <div class="provider-info">
+                            <h3>OpenAI</h3>
+                        </div>
+                    </div>
+                    <div class="provider-tags">
+                        <span class="tag">LLM</span>
+                        <span class="tag">TEXT EMBEDDING</span>
+                        <span class="tag">SPEECH2TEXT</span>
+                        <span class="tag">MODERATION</span>
+                        <span class="tag">TTS</span>
+                    </div>
+                    <p class="provider-status">
+                        <i class="fas fa-info-circle"></i>
+                        请配置 API 密钥，添加模型。
+                    </p>
+                    <div class="provider-actions">
+                        <button class="btn-configure" onclick="configureProvider('openai')">
+                            <i class="fas fa-cog"></i>
+                            设置
+                        </button>
+                        <button class="btn-add-model" onclick="addModel('openai')">
+                            <i class="fas fa-plus"></i>
+                            添加模型
+                        </button>
+                    </div>
+                </div>
+
+                <!-- vLLM -->
+                <div class="provider-card unconfigured" data-provider="vllm">
+                    <div class="provider-header">
+                        <div class="provider-icon">
+                            <img src="{{ url_for('static', path='/images/config/3_vllm.png') }}" alt="vLLM">
+                        </div>
+                        <div class="provider-info">
+                            <h3>vLLM</h3>
+                        </div>
+                    </div>
+                    <div class="provider-tags">
+                        <span class="tag">LLM</span>
+                    </div>
+                    <p class="provider-status">
+                        <i class="fas fa-info-circle"></i>
+                        请配置 API 密钥，添加模型。
+                    </p>
+                    <div class="provider-actions">
+                        <button class="btn-configure" onclick="configureProvider('vllm')">
+                            <i class="fas fa-cog"></i>
+                            设置
+                        </button>
+                        <button class="btn-add-model" onclick="addModel('vllm')">
+                            <i class="fas fa-plus"></i>
+                            添加模型
+                        </button>
+                    </div>
+                </div>
+
+                <!-- DeepSeek -->
+                <div class="provider-card unconfigured" data-provider="deepseek">
+                    <div class="provider-header">
+                        <div class="provider-icon">
+                            <img src="{{ url_for('static', path='/images/config/1_deepseek.png') }}" alt="DeepSeek">
+                        </div>
+                        <div class="provider-info">
+                            <h3>深度求索</h3>
+                        </div>
+                    </div>
+                    <div class="provider-tags">
+                        <span class="tag">LLM</span>
+                        <span class="tag">REASONING</span>
+                    </div>
+                    <p class="provider-status">
+                        <i class="fas fa-info-circle"></i>
+                        请配置 API 密钥，添加模型。
+                    </p>
+                    <div class="provider-actions">
+                        <button class="btn-configure" onclick="configureDeepSeek()">
+                            <i class="fas fa-cog"></i> 配置
+                        </button>
+                        <button class="btn-add-model" onclick="addModel('deepseek')">
+                            <i class="fas fa-plus"></i> 添加模型
+                        </button>
+                    </div>
+                </div>
+
+                <!-- OpenAI-API-compatible -->
+                <div class="provider-card unconfigured" data-provider="openai-compatible">
+                    <div class="provider-header">
+                        <div class="provider-icon">
+                            <i class="fas fa-plug"></i>
+                        </div>
+                        <div class="provider-info">
+                            <h3>OpenAI-API-compatible</h3>
+                        </div>
+                    </div>
+                    <div class="provider-tags">
+                        <span class="tag">LLM</span>
+                        <span class="tag">RERANK</span>
+                        <span class="tag">TEXT EMBEDDING</span>
+                        <span class="tag">SPEECH2TEXT</span>
+                        <span class="tag">TTS</span>
+                    </div>
+                    <p class="provider-status">
+                        <i class="fas fa-info-circle"></i>
+                        请配置自定义模型
+                    </p>
+                    <div class="provider-actions">
+                        <button class="btn-configure" onclick="configureOpenAICompatible()">
+                            <i class="fas fa-cog"></i>
+                            设置
+                        </button>
+                        <button class="btn-add-model" onclick="addModel('openai-compatible')">
+                            <i class="fas fa-plus"></i>
+                            添加模型
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 实例配置区域 -->
+            <div class="instance-config-section">
+                <div class="section-header">
+                    <h2>实例配置</h2>
+                    <button class="btn-new-instance" onclick="showNewInstanceModal()">
+                        <i class="fas fa-plus"></i>
+                        新建
+                    </button>
+                </div>
+                
+                <div class="instance-table-container">
+                    <table class="instance-table" id="instanceTable">
+                        <thead>
+                            <tr>
+                                <th>远程模型地址</th>
+                                <th>远程模型名称</th>
+                                <th>模型类型</th>
+                                <th>API KEY</th>
+                                <th>测试结果</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="instanceTableBody">
+                            <!-- 动态生成的实例配置行 -->
+                        </tbody>
+                    </table>
+                    
+                    <!-- 空状态 -->
+                    <div class="empty-state" id="emptyState">
+                        <div class="empty-icon">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <p class="empty-text">暂无数据</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 配置模态框 -->
+<div id="configModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="modalTitle">配置模型供应商</h3>
+            <span class="close" onclick="closeConfigModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form id="configForm">
+                <div class="form-group">
+                    <label for="apiKey">API Key:</label>
+                    <input type="password" id="apiKey" name="apiKey" required>
+                </div>
+                <div class="form-group">
+                    <label for="baseUrl">Base URL (可选):</label>
+                    <input type="url" id="baseUrl" name="baseUrl" placeholder="https://api.openai.com/v1">
+                </div>
+                <div class="form-group">
+                    <label for="organization">Organization (可选):</label>
+                    <input type="text" id="organization" name="organization">
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-cancel" onclick="closeConfigModal()">取消</button>
+            <button type="button" class="btn-save" onclick="saveConfig()">保存</button>
+        </div>
+    </div>
+</div>
+
+<!-- 添加模型模态框 -->
+<div id="addModelModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>添加模型</h3>
+            <span class="close" onclick="closeAddModelModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form id="addModelForm">
+                <div class="form-group">
+                    <label for="modelName">模型名称:</label>
+                    <input type="text" id="modelName" name="modelName" required>
+                </div>
+                <div class="form-group">
+                    <label for="modelType">模型类型:</label>
+                    <select id="modelType" name="modelType" required>
+                        <option value="">请选择模型类型</option>
+                        <option value="llm">LLM</option>
+                        <option value="embedding">TEXT EMBEDDING</option>
+                        <option value="speech2text">SPEECH2TEXT</option>
+                        <option value="moderation">MODERATION</option>
+                        <option value="tts">TTS</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="modelDescription">模型描述 (可选):</label>
+                    <textarea id="modelDescription" name="modelDescription" rows="3"></textarea>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-cancel" onclick="closeAddModelModal()">取消</button>
+            <button type="button" class="btn-save" onclick="saveModel()">添加</button>
+        </div>
+    </div>
+</div>
+
+<!-- 新建实例模态框 -->
+<div id="newInstanceModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>新建实例配置</h3>
+            <span class="close" onclick="closeNewInstanceModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form id="newInstanceForm">
+                <div class="form-group">
+                    <label for="remoteUrl">远程模型地址:</label>
+                    <input type="url" id="remoteUrl" name="remoteUrl" required placeholder="https://api.example.com/v1">
+                </div>
+                <div class="form-group">
+                    <label for="remoteModelName">远程模型名称:</label>
+                    <input type="text" id="remoteModelName" name="remoteModelName" required placeholder="gpt-3.5-turbo">
+                </div>
+                <div class="form-group">
+                    <label for="instanceApiKey">API KEY:</label>
+                    <input type="password" id="instanceApiKey" name="instanceApiKey" required>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-cancel" onclick="closeNewInstanceModal()">取消</button>
+            <button type="button" class="btn-test" onclick="testInstance()">测试连接</button>
+            <button type="button" class="btn-save" onclick="saveInstance()">保存</button>
+        </div>
+    </div>
+</div>
+
+<!-- DeepSeek配置模态框 -->
+<div id="deepSeekConfigModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>设置 深度求索</h2>
+            <span class="close" onclick="closeDeepSeekConfigModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form id="deepSeekConfigForm" onsubmit="handleDeepSeekConfigSubmit(event)">
+                <div class="form-group">
+                    <label for="deepSeekApiKey">API Key *</label>
+                    <input type="password" id="deepSeekApiKey" name="apiKey" required 
+                           placeholder="请输入您的DeepSeek API Key">
+                    <div class="form-hint-section">
+                        <a href="https://platform.deepseek.com/api_keys" target="_blank" class="api-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            获取API Key
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="deepSeekModelName">模型名称 *</label>
+                    <input type="text" id="deepSeekModelName" name="modelName" required 
+                           placeholder="deepseek-chat" value="deepseek-chat">
+                    <small class="form-text">DeepSeek模型名称，默认为deepseek-chat</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="deepSeekEndpoint">自定义API端点地址</label>
+                    <input type="url" id="deepSeekEndpoint" name="endpoint" 
+                           placeholder="https://api.deepseek.com/v1">
+                    <small class="form-text">可选，留空使用默认端点</small>
+                </div>
+                
+                <div class="security-notice">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>您的密钥将被加密存储，确保安全性</span>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeDeepSeekConfigModal()">取消</button>
+            <button type="button" class="btn btn-test" onclick="testDeepSeekConnection()">测试连接</button>
+            <button type="submit" form="deepSeekConfigForm" class="btn btn-primary">保存配置</button>
+        </div>
+    </div>
+</div>
+
+<!-- OpenAI-API-compatible配置模态框 -->
+<div id="openaiCompatibleConfigModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>设置 OpenAI-API-compatible</h2>
+            <span class="close" onclick="closeOpenAICompatibleConfigModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form id="openaiCompatibleConfigForm" onsubmit="handleOpenAICompatibleConfigSubmit(event)">
+                <div class="form-group">
+                    <label for="compatibleModelType">模型类型 *</label>
+                    <select id="compatibleModelType" name="modelType" required>
+                        <option value="">请选择模型类型</option>
+                        <option value="llm">LLM (大语言模型)</option>
+                        <option value="embedding">TEXT EMBEDDING (文本嵌入)</option>
+                        <option value="rerank">RERANK (重排序)</option>
+                        <option value="speech2text">SPEECH2TEXT (语音转文本)</option>
+                        <option value="tts">TTS (文本转语音)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="compatibleModelName">模型名称 *</label>
+                    <input type="text" id="compatibleModelName" name="modelName" required 
+                           placeholder="例如: gpt-3.5-turbo, claude-3-sonnet">
+                    <small class="form-text">输入您要使用的模型名称</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="compatibleApiKey">API Key *</label>
+                    <input type="password" id="compatibleApiKey" name="apiKey" required 
+                           placeholder="请输入您的API Key">
+                </div>
+                
+                <div class="form-group">
+                    <label for="compatibleEndpoint">API endpoint URL *</label>
+                    <input type="url" id="compatibleEndpoint" name="endpoint" required
+                           placeholder="https://api.example.com/v1">
+                    <small class="form-text">兼容OpenAI API格式的服务端点</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="compatibleContextLength">模型上下文长度</label>
+                    <input type="number" id="compatibleContextLength" name="contextLength" 
+                           placeholder="4096" min="1" max="1000000">
+                    <small class="form-text">模型支持的最大上下文长度（可选）</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="compatibleMaxTokens">最大 token 上限</label>
+                    <input type="number" id="compatibleMaxTokens" name="maxTokens" 
+                           placeholder="2048" min="1" max="100000">
+                    <small class="form-text">单次请求的最大输出token数（可选）</small>
+                </div>
+                
+                <div class="security-notice">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>您的密钥将被加密存储，确保安全性</span>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeOpenAICompatibleConfigModal()">取消</button>
+            <button type="button" class="btn btn-test" onclick="testOpenAICompatibleConnection()">测试连接</button>
+            <button type="submit" form="openaiCompatibleConfigForm" class="btn btn-primary">保存配置</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', path='/js/config/model_config.js') }}"></script>
+<script>
+// 页面加载完成后设置当前页面的活动菜单项
+document.addEventListener('DOMContentLoaded', function() {
+    // 等待侧边栏管理器初始化完成
+    setTimeout(() => {
+        if (window.sidebarManager) {
+            window.sidebarManager.setActiveMenuByPage('model-config');
+        }
+    }, 100);
+});
+</script>
+{% endblock %} 

@@ -1,0 +1,27 @@
+[Unit]
+Description=Intelligent Agent Platform
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/data/web_new
+Environment=PATH=/root/anaconda3/envs/agent/bin
+ExecStart=/root/anaconda3/envs/agent/bin/python run.py
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=mixed
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+# 安全设置
+NoNewPrivileges=true
+PrivateTmp=true
+
+# 资源限制
+MemoryMax=2G
+TasksMax=1000
+
+[Install]
+WantedBy=multi-user.target 

@@ -1,0 +1,89 @@
+app:
+  name: 智能体平台
+  version: 0.1.0
+
+# 计算设备配置
+compute:
+  # 设备优先级: npu > cuda > cpu
+  device_priority: 
+    - npu
+    - cuda
+    - cpu
+  # NPU配置
+  npu:
+    enable: true
+    device_id: 0
+    # 华为昇腾NPU内存管理
+    memory_fraction: 0.8
+    allow_growth: true
+  # GPU配置
+  gpu:
+    enable: true
+    memory_fraction: 0.8
+    allow_growth: true
+
+database:
+  path: data/agents.db
+  type: sqlite
+embedding_model:
+  path: app\ai_tools\embedding_model\text2vec-base-chinese
+  type: text2vec
+lightrag:
+  embedding:
+    batch_size: 16
+    dimension: 768
+    model_name: text2vec-base-chinese
+    model_path: app\ai_tools\embedding_model\text2vec-base-chinese
+  file_processing:
+    supported_file_types:
+    - .txt
+    - .md
+    - .pdf
+    - .docx
+    - .doc
+    - .pptx
+    - .xlsx
+    - .csv
+    text_splitter:
+      chunk_overlap: 250
+      chunk_size: 3000
+      pdf_separator: true
+      type: zh_title_enhance
+    use_ocr: false
+  retrieval:
+    reranking: false
+    score_threshold: 0.5
+    top_k: 3
+  vector_store:
+    collection_name: knowledge_base
+    path: data/vector_store
+    type: faiss
+ollama:
+  default_params:
+    max_tokens: 4096
+    temperature: 0.7
+    top_p: 0.95
+  models:
+  - llama3
+  - mistral
+  - qwen:14b
+  url: http://localhost:11434
+security:
+  access_token_expire_minutes: 30
+  algorithm: HS256
+  secret_key: 09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7
+system_prompts:
+  academic: 你是一位学术专家。请用严谨的学术风格回答用户的问题，必要时引用相关研究。
+  agent: 你是一个aiagent,请根据agent返回的结果重新润色一下再次回答
+  code: 你是一个专业的程序员。请编写简洁、高效的代码来回答用户的问题。
+  creative: 你是一个富有创造力的助手。请提供有创意的想法和建议。
+  default: 你是一个有用的AI助手。请详细、准确地回答用户的问题。
+vllm:
+  api_key: sk-4d1c2f1ab80049f1a55b1e2e45694cc5
+  default_params:
+    max_tokens: 4096
+    temperature: 0.7
+    top_p: 0.95
+  model_name:
+  - deepseek-chat
+  url: https://api.deepseek.com

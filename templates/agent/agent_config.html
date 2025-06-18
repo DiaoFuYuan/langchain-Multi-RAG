@@ -1,0 +1,296 @@
+{% extends "common/base.html" %}
+
+{% block title %}{{ agent.name }} - 智能体配置{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', path='/css/agent/agent_config.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="agent-config-page" 
+    data-agent-id="{{ agent.id }}"
+    data-agent-name="{{ agent.name }}"
+    data-agent-description="{{ agent.description or '' }}"
+    data-agent-category="{{ agent.category }}"
+    data-agent-template="{{ agent.template }}"
+    data-agent-system-prompt="{{ agent.system_prompt or '' }}"
+    data-agent-is-public="{{ agent.is_public|lower }}"
+>
+    <!-- 顶部导航栏 -->
+    <div class="config-header">
+        <div class="header-left">
+            <nav class="breadcrumb">
+                <a href="/agent/quick" class="breadcrumb-item">全部智能体</a>
+                <span class="breadcrumb-separator">/</span>
+                <span class="breadcrumb-item current">{{ agent.name }}</span>
+            </nav>
+        </div>
+        <div class="header-right">
+            <div class="status-badges">
+                <span class="status-badge unpublished">
+                    <i class="fas fa-circle"></i>
+                    未发布
+                </span>
+            </div>
+            <div class="action-buttons">
+                <button class="btn btn-secondary" onclick="resetAgent()">
+                    <i class="fas fa-undo"></i>
+                    重置
+                </button>
+                <button class="btn btn-secondary" onclick="debugAgent()">
+                    <i class="fas fa-bug"></i>
+                    调试
+                </button>
+                <button class="btn btn-primary" onclick="saveAgent()">
+                    <i class="fas fa-save"></i>
+                    保存
+                </button>
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" onclick="togglePublishDropdown()">
+                        发布设置
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="dropdown-menu" id="publishDropdown">
+                        <a href="#" class="dropdown-item" onclick="publishAgent('private')">
+                            <i class="fas fa-lock"></i>
+                            私有发布
+                        </a>
+                        <a href="#" class="dropdown-item" onclick="publishAgent('public')">
+                            <i class="fas fa-globe"></i>
+                            公开发布
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主要内容区域 -->
+    <div class="config-main">
+        <!-- 左侧配置区域 -->
+        <div class="config-left">
+            <!-- 基本设置 -->
+            <div class="config-card">
+                <div class="card-header">
+                    <h3><i class="fas fa-cog"></i> 基本设置</h3>
+                </div>
+                <div class="card-content">
+                    <div class="form-group">
+                        <label class="form-label">问题描述</label>
+                        <div class="form-help">描述这个智能体主要解决什么问题</div>
+                        <textarea class="form-textarea" id="problemDescription" placeholder="我还没有介绍...">{{ agent.problem_description or '' }}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 回答描述 -->
+            <div class="config-card">
+                <div class="card-header">
+                    <h3><i class="fas fa-comment-alt"></i> 回答描述</h3>
+                </div>
+                <div class="card-content">
+                    <div class="form-group">
+                        <label class="form-label">回答描述</label>
+                        <div class="form-help">描述智能体的回答风格和特点</div>
+                        <textarea class="form-textarea" id="answerDescription" placeholder="我还没有介绍...">{{ agent.answer_description or '' }}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 模型设置 -->
+            <div class="config-card">
+                <div class="card-header">
+                    <h3><i class="fas fa-brain"></i> 模型设置</h3>
+                </div>
+                <div class="card-content">
+                    <div class="form-group">
+                        <label class="form-label">模型选择</label>
+                        <select class="form-select" id="modelSelect">
+                            <option value="deepseek-r1-32b">DeepSeek-R1-32b</option>
+                            <option value="deepseek-chat">DeepSeek Chat</option>
+                            <option value="llama3">Llama 3</option>
+                            <option value="qwen:14b">Qwen 14B</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">提示词设置</label>
+                        <div class="form-help">定义智能体的角色和行为规范</div>
+                        <textarea class="form-textarea large" id="systemPrompt" placeholder="你是一个智能助手...">{{ agent.system_prompt or '你是一个智能助手。\n\n请以简洁明了的方式回答用户问题。' }}</textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右侧工具和预览区域 -->
+        <div class="config-right">
+            <!-- 知识与工具 -->
+            <div class="config-card">
+                <div class="card-header">
+                    <h3><i class="fas fa-database"></i> 知识与工具</h3>
+                </div>
+                <div class="card-content">
+                    <!-- 关联知识库 -->
+                    <div class="tool-section">
+                        <div class="tool-header">
+                            <i class="fas fa-link"></i>
+                            <span class="tool-title">关联知识库</span>
+                            <div class="tool-actions">
+                                <button class="btn-link" onclick="selectKnowledge()">选择</button>
+                                <button class="btn-link" onclick="editKnowledge()">参数</button>
+                            </div>
+                        </div>
+                        <div class="knowledge-list" id="knowledgeList">
+                            <div class="empty-state">
+                                <i class="fas fa-plus-circle"></i>
+                                <span>暂无关联知识库</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 插件调用 -->
+                    <div class="tool-section">
+                        <div class="tool-header">
+                            <i class="fas fa-puzzle-piece"></i>
+                            <span class="tool-title">插件调用</span>
+                            <div class="tool-actions">
+                                <button class="btn-link" onclick="selectPlugins()">选择</button>
+                            </div>
+                        </div>
+                        <div class="plugin-list" id="pluginList">
+                            <div class="empty-state">
+                                <i class="fas fa-plus-circle"></i>
+                                <span>暂无插件</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 文件上传 -->
+                    <div class="tool-section">
+                        <div class="tool-header">
+                            <i class="fas fa-upload"></i>
+                            <span class="tool-title">文件上传</span>
+                            <label class="tool-toggle">
+                                <input type="checkbox" id="fileUploadEnabled">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="tool-description">允许用户上传文件进行分析</div>
+                        <div class="tool-status">关闭</div>
+                    </div>
+
+                    <!-- 变量设置 -->
+                    <div class="tool-section">
+                        <div class="tool-header">
+                            <i class="fas fa-code"></i>
+                            <span class="tool-title">变量设置</span>
+                            <div class="tool-actions">
+                                <button class="btn-link" onclick="addVariable()">新增</button>
+                            </div>
+                        </div>
+                        <div class="variable-list" id="variableList">
+                            <div class="empty-state">
+                                <i class="fas fa-plus-circle"></i>
+                                <span>暂无变量</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 对话体验 -->
+            <div class="config-card">
+                <div class="card-header">
+                    <h3><i class="fas fa-comments"></i> 对话体验</h3>
+                </div>
+                <div class="card-content">
+                    <!-- 开场白 -->
+                    <div class="chat-section">
+                        <div class="section-header">
+                            <i class="fas fa-play-circle"></i>
+                            <span class="section-title">开场白</span>
+                            <button class="btn-link" onclick="editOpeningMessage()">编辑</button>
+                        </div>
+                        <div class="opening-message" id="openingMessage">
+                            <p>每次对话开始时，发送一个初始内容，支持标准 Markdown 语法，支持使用 '[]' 符号生成可点击发送的引导问题，例如：</p>
+                            <p>我是你的智能助手，你可以问我：<br>
+                            [你的主要职责是什么？]</p>
+                        </div>
+                    </div>
+
+                    <!-- 语音播放 -->
+                    <div class="chat-section">
+                        <div class="section-header">
+                            <i class="fas fa-volume-up"></i>
+                            <span class="section-title">语音播放</span>
+                            <span class="feature-badge">浏览器自带</span>
+                        </div>
+                    </div>
+
+                    <!-- 语音输入 -->
+                    <div class="chat-section">
+                        <div class="section-header">
+                            <i class="fas fa-microphone"></i>
+                            <span class="section-title">语音输入</span>
+                            <label class="tool-toggle">
+                                <input type="checkbox" id="voiceInputEnabled">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 预览测试 -->
+                    <div class="chat-preview">
+                        <div class="preview-header">
+                            <span>预览</span>
+                            <button class="btn-link" onclick="clearPreview()">清空</button>
+                        </div>
+                        <div class="chat-container" id="chatContainer">
+                            <div class="chat-message bot-message">
+                                <div class="message-avatar">
+                                    <i class="fas fa-robot"></i>
+                                </div>
+                                <div class="message-content">
+                                    <p>我是你的智能助手，你可以问我：</p>
+                                    <div class="suggested-questions">
+                                        <button class="suggestion-btn" onclick="sendSuggestion('你的主要职责是什么？')">你的主要职责是什么？</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chat-input-area">
+                            <div class="input-wrapper">
+                                <input type="text" class="chat-input" id="chatInput" placeholder="输入消息...">
+                                <button class="send-btn" onclick="sendTestMessage()">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', path='/js/agent/agent_config.js') }}"></script>
+<script>
+    // 在页面加载后设置智能体数据
+    document.addEventListener('DOMContentLoaded', function() {
+        const container = document.querySelector('.agent-config-page');
+        if (container) {
+            window.agentData = {
+                id: parseInt(container.dataset.agentId) || 0,
+                name: container.dataset.agentName || '',
+                description: container.dataset.agentDescription || '',
+                category: container.dataset.agentCategory || '',
+                template: container.dataset.agentTemplate || '',
+                system_prompt: container.dataset.agentSystemPrompt || '',
+                is_public: container.dataset.agentIsPublic === 'true'
+            };
+        }
+    });
+</script>
+{% endblock %} 

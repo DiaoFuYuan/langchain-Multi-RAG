@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能体平台 - 登录</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/css/login.css') }}">
+    <!-- 添加字体图标库 -->
+    <link rel="stylesheet" href="{{ url_for('fontawesome', path='/css/all.min.css') }}">
+</head>
+<body>
+    <div class="login-container">
+        <!-- 左侧图形区域 -->
+        <div class="login-image">
+            <!-- SVG图形和背景将通过CSS添加 -->
+        </div>
+        
+        <!-- 右侧登录表单 -->
+        <div class="login-form">
+            <div class="form-header">
+                <h2>您好，欢迎登录</h2>
+                <h1>遂宁移动智能体平台</h1>
+            </div>
+            
+            <form id="loginForm" action="/auth/login" method="post">
+                <!-- 用户名输入 -->
+                <div class="form-group">
+                    <label for="username">
+                        <span class="icon user-icon"></span>
+                    </label>
+                    <input type="text" id="username" name="username" placeholder="用户名" required>
+                </div>
+                
+                <!-- 密码输入 -->
+                <div class="form-group">
+                    <label for="password">
+                        <span class="icon password-icon"></span>
+                    </label>
+                    <input type="password" id="password" name="password" placeholder="密码" required>
+                </div>
+                
+                <!-- 验证码 -->
+                <div class="form-group captcha-group">
+                    <input type="text" id="captcha" name="verification_code" placeholder="验证码" required>
+                    <div class="captcha-image">
+                        <!-- 使用随机查询参数避免缓存 -->
+                        <img id="captchaImage" src="{{ captcha_image_path }}?t={{ range(1, 10000) | random }}" alt="验证码">
+                    </div>
+                </div>
+                
+                <!-- 按钮组 -->
+                <div class="form-buttons">
+                    <button type="submit" class="btn btn-login">登录</button>
+                    <button type="reset" class="btn btn-reset">重置</button>
+                </div>
+            </form>
+            
+            <!-- 登录结果消息（保留但不显示） -->
+            <div id="message" class="message"></div>
+            
+            <!-- 账号申请提示 -->
+            <div class="register-hint">
+                没有账号？请向<span class="admin-text">管理员</span>申请账号授权
+            </div>
+        </div>
+    </div>
+    
+    <!-- 版权信息 -->
+    <div class="copyright-footer">
+        <p id="copyright-text"></p>
+    </div>
+
+    <!-- 弹窗结构 -->
+    <div id="popupOverlay" class="popup-overlay">
+        <div id="popupContainer" class="popup-container">
+            <div id="popupIcon" class="popup-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div id="popupTitle" class="popup-title">操作成功</div>
+            <div id="popupMessage" class="popup-message">您的操作已完成</div>
+            <button id="popupButton" class="popup-button">确定</button>
+        </div>
+    </div>
+
+        <script src="{{ url_for('static', path='/js/login.js') }}"></script>
+    
+   
+    <script>
+        // 简洁的版权信息显示
+        document.addEventListener('DOMContentLoaded', function() {
+            var copyrightElement = document.getElementById('copyright-text');
+            if (copyrightElement) {
+                copyrightElement.innerHTML = 'Copyright © 2024 遂宁移动 刁福元. All rights reserved.';
+            }
+        });
+    </script>
+</body>
+</html>

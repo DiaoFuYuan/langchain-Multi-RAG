@@ -1,0 +1,167 @@
+{% extends "common/base.html" %}
+
+{% block title %}知识库管理{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', path='/css/knowledge/knowledge_base.css') }}">
+{% endblock %}
+
+{% block content %}
+<!-- 知识库管理主界面 -->
+<div class="kb-container">
+    <div class="kb-main-card">
+        <!-- 页面头部 -->
+        <div class="kb-header">
+            <div class="kb-header-top">
+                <h1 class="kb-title">知识库</h1>
+                <div class="kb-header-actions">
+                    <div class="kb-search">
+                        <input type="text" placeholder="搜索知识库" id="searchInput">
+                    </div>
+                    <button class="kb-create-btn" id="createKnowledgeBaseBtn">
+                        <i class="fas fa-plus"></i>
+                        新建
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 标签页 -->
+            <div class="kb-tabs">
+                <button class="kb-tab active" data-tab="personal">个人创建</button>
+                <button class="kb-tab" data-tab="global">全局数据</button>
+            </div>
+        </div>
+
+        <!-- 内容区域 -->
+        <div class="kb-content">
+            <!-- 表格 -->
+            <div class="kb-table">
+                <div class="kb-table-header">
+                    <div class="kb-col">名称</div>
+                    <div class="kb-col">介绍</div>
+                    <div class="kb-col">权限</div>
+                    <div class="kb-col">嵌入模型</div>
+                    <div class="kb-col">分层索引</div>
+                    <div class="kb-col">操作</div>
+                </div>
+                <div class="kb-table-body" id="knowledgeBaseTableBody">
+                    <!-- 数据将通过JavaScript动态加载 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 页脚分页 -->
+        <div class="kb-footer">
+            <div class="kb-pagination">
+                <span class="kb-page-info" id="pageInfo">共 0 个知识库</span>
+                <div class="kb-page-controls">
+                    <button class="kb-page-btn kb-page-prev">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <span class="kb-page-current">1</span>
+                    <button class="kb-page-btn kb-page-next">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    <div class="kb-page-goto">
+                        跳转到
+                        <input type="number" class="kb-page-input" value="1" min="1" max="1">
+                        页
+                    </div>
+                    <span class="kb-page-total" id="totalPages">共 1 页</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 创建知识库模态框 -->
+<div id="createKbModal" class="kb-modal">
+    <div class="kb-modal-content">
+        <div class="kb-modal-header">
+            <h3 class="kb-modal-title">
+                <i class="fas fa-plus-circle"></i>
+                新建知识库
+            </h3>
+            <button class="kb-modal-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="kb-modal-body">
+            <form id="createKbForm">
+                <div class="kb-form-group">
+                    <label class="kb-form-label" for="kbName">
+                        <i class="fas fa-tag"></i>
+                        知识库名称 *
+                    </label>
+                    <input type="text" id="kbName" name="name" class="kb-form-input" required>
+                </div>
+                <div class="kb-form-group">
+                    <label class="kb-form-label" for="kbDescription">
+                        <i class="fas fa-align-left"></i>
+                        知识库描述
+                    </label>
+                    <textarea id="kbDescription" name="description" class="kb-form-textarea" placeholder="请输入知识库描述"></textarea>
+                </div>
+                <div class="kb-form-group">
+                    <label class="kb-form-label" for="embeddingModel">
+                        <i class="fas fa-brain"></i>
+                        嵌入模型 *
+                    </label>
+                    <select id="embeddingModel" name="embedding_model_id" class="kb-form-select" required>
+                        <option value="">请选择嵌入模型...</option>
+                    </select>
+                    <div class="kb-form-help">
+                        <small>选择用于文档向量化的嵌入模型。如果没有可用模型，请先在<a href="/config/model-config" target="_blank">模型配置</a>中添加embedding模型。</small>
+                    </div>
+                </div>
+                <div class="kb-form-group">
+                    <label class="kb-form-checkbox">
+                        <input type="checkbox" name="is_public">
+                        <i class="fas fa-globe"></i>
+                        <span>设为公共知识库</span>
+                    </label>
+                </div>
+            </form>
+        </div>
+        <div class="kb-modal-footer">
+            <button type="button" class="kb-btn kb-btn-cancel">取消</button>
+            <button type="submit" form="createKbForm" class="kb-btn kb-btn-primary">创建</button>
+        </div>
+    </div>
+</div>
+
+<!-- 删除确认模态框 -->
+<div id="deleteKbModal" class="kb-modal">
+    <div class="kb-modal-content">
+        <div class="kb-modal-header">
+            <h3 class="kb-modal-title">确认删除</h3>
+            <button class="kb-modal-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="kb-modal-body">
+            <p>确定要删除知识库 "<span id="deleteKbName"></span>" 吗？</p>
+            <p style="color: #ff4d4f; font-size: 12px;">此操作不可恢复，请谨慎操作。</p>
+        </div>
+        <div class="kb-modal-footer">
+            <button type="button" class="kb-btn kb-btn-cancel">取消</button>
+            <button type="button" class="kb-btn kb-btn-danger" id="confirmDeleteBtn">删除</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', path='/js/knowledge/knowledge_base.js') }}"></script>
+<script>
+// 页面加载完成后设置当前页面的活动菜单项
+document.addEventListener('DOMContentLoaded', function() {
+    // 等待侧边栏管理器初始化完成
+    setTimeout(() => {
+        if (window.sidebarManager) {
+            window.sidebarManager.setActiveMenuByPage('knowledge');
+        }
+    }, 100);
+});
+</script>
+{% endblock %}

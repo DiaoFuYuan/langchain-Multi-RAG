@@ -1,0 +1,181 @@
+{% extends "common/base.html" %}
+
+{% block title %}文档查看器{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', path='/css/knowledge/knowledge_base.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', path='/css/knowledge/document_viewer.css') }}">
+<link rel="stylesheet" href="{{ url_for('fontawesome', path='/css/all.min.css') }}">
+{% endblock %}
+
+{% block content %}
+<!-- 文档查看器主界面 -->
+<div class="document-viewer-container">
+    <!-- 文档列表 -->
+    <div class="document-viewer-page">
+        <!-- 页面标题和操作区域 -->
+        <div class="doc-header">
+            <div class="doc-title-area">
+                <i class="fas fa-folder-open doc-title-icon"></i>
+                <span class="doc-title" id="currentKbName" data-kb-name="{{ kb_name }}">{{ kb_name }}</span>
+                <div class="processing-queue" id="processingQueue" style="display: none;">
+                    <i class="fas fa-hourglass-half"></i>
+                    <span class="queue-text">处理队列：</span>
+                    <span class="queue-count" id="queueCount">0</span>
+                    <span class="queue-label">个文件待处理</span>
+                </div>
+                <!-- 分层索引状态 -->
+                <div class="hierarchical-status" id="hierarchicalStatus" style="display: none;">
+                    <i class="fas fa-layer-group"></i>
+                    <span class="status-text" id="hierarchicalStatusText">分层索引状态检查中...</span>
+                    <button class="rebuild-btn" id="rebuildHierarchicalBtn" style="display: none;" title="重建分层索引">
+                        <i class="fas fa-redo"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="doc-actions">
+                <div class="doc-search">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" placeholder="搜索文档..." />
+                </div>
+                <button class="doc-back-btn" id="backToKnowledgeBase">
+                    <i class="fas fa-arrow-left"></i>
+                    返回
+                </button>
+                <button class="doc-upload-btn" id="uploadDocumentBtn">
+                    <i class="fas fa-upload"></i>
+                    上传文档
+                </button>
+            </div>
+        </div>
+        
+        <!-- 文档内容区域 -->
+        <div class="doc-content">
+            <!-- 文档表格头部 -->
+            <div class="doc-table-header">
+                {% set table_headers = ['文档名称', '介绍', '类型', '上传时间', '分层索引', '状态', '操作'] %}
+                {% for header in table_headers %}
+                <div class="doc-col">{{ header }}</div>
+                {% endfor %}
+            </div>
+            
+            <!-- 文档表格内容 -->
+            <div class="doc-table-body">
+                <!-- 文档内容将由JavaScript动态生成 -->
+                <div class="doc-loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <span>正在加载文档...</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 文档分页 -->
+        <div class="doc-footer">
+            <div class="doc-pagination">
+                <span class="doc-page-info" id="pageInfo">共 0 个文档</span>
+                <div class="doc-page-controls">
+                    <button class="doc-page-btn doc-page-prev" id="prevPageBtn">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <span class="doc-page-current" id="currentPage">1</span>
+                    <button class="doc-page-btn doc-page-next" id="nextPageBtn">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    <div class="doc-page-goto">
+                        跳转到
+                        <input type="number" class="doc-page-input" id="gotoPageInput" value="1" min="1" max="1">
+                        页
+                    </div>
+                    <span class="doc-page-total" id="totalPages">共 1 页</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 上传文档模态框 -->
+    <div class="doc-modal" id="uploadDocumentModal">
+        <div class="doc-modal-content">
+            <div class="doc-modal-header">
+                <h3 class="doc-modal-title">
+                    <i class="fas fa-upload"></i>
+                    上传文档
+                </h3>
+                <button class="doc-modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="doc-modal-body">
+                <!-- 文件选择区域 -->
+                <div class="upload-section">
+                    <input type="file" id="uploadFileInput" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,.csv" style="display: none;">
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-empty-state">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>拖拽文件到此处或点击选择文件</p>
+                            <small>支持 PDF, Word, Excel, TXT 等格式，单个文件最大1GB</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 已选择的文件列表 -->
+                <div id="selectedFilesList" class="selected-files-section" style="display: none;">
+                    <h4 class="files-list-title">
+                        <i class="fas fa-list"></i>
+                        已选择的文件
+                    </h4>
+                    <div id="uploadFileList" class="upload-file-list">
+                        <!-- 文件列表将在这里显示 -->
+                    </div>
+                </div>
+                
+                <!-- 上传进度 -->
+                <div id="uploadProgressContainer" class="upload-progress-container" style="display: none;">
+                    <div class="upload-progress-bar">
+                        <div id="uploadProgressBar" class="upload-progress-fill"></div>
+                    </div>
+                    <div id="uploadProgressText" class="upload-progress-text">准备上传...</div>
+                </div>
+            </div>
+            <div class="doc-modal-footer">
+                <button type="button" class="doc-btn doc-btn-cancel" id="cancelUploadBtn">取消</button>
+                <button type="button" class="doc-btn doc-btn-primary" id="startUploadBtn" disabled>开始上传</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 文档操作确认模态框 -->
+    <div class="doc-modal" id="confirmActionModal">
+        <div class="doc-modal-content">
+            <div class="doc-modal-header">
+                <h3 class="doc-modal-title" id="confirmModalTitle">确认操作</h3>
+                <button class="doc-modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="doc-modal-body">
+                <p id="confirmModalMessage">您确定要执行此操作吗？</p>
+            </div>
+            <div class="doc-modal-footer">
+                <button class="doc-btn doc-btn-cancel" id="confirmCancelBtn">取消</button>
+                <button class="doc-btn doc-btn-danger" id="confirmActionBtn">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', path='/js/knowledge/document_viewer.js') }}"></script>
+<script src="{{ url_for('static', path='/js/knowledge/document_upload.js') }}"></script>
+<script>
+// 页面加载完成后设置当前页面的活动菜单项
+document.addEventListener('DOMContentLoaded', function() {
+    // 等待侧边栏管理器初始化完成
+    setTimeout(() => {
+        if (window.sidebarManager) {
+            window.sidebarManager.setActiveMenuByPage('knowledge');
+        }
+    }, 100);
+});
+</script>
+{% endblock %}

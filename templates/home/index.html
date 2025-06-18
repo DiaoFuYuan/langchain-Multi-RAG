@@ -1,0 +1,73 @@
+{% extends "common/base.html" %}
+
+{% block title %}智能体平台 - 主页{% endblock %}
+
+{% block content %}
+<!-- 搜索栏 -->
+<div class="search-container">
+    <div class="search-box">
+        <input type="text" placeholder="请输入场景名称或关键词">
+        <button class="search-btn">
+            <i class="fas fa-search"></i>
+        </button>
+    </div>
+</div>
+
+<!-- 分类标签栏 -->
+<div class="category-tabs">
+    <a href="#" class="tab-item active">全部</a>
+    <a href="#" class="tab-item">
+        最新
+        <span class="badge new">NEW</span>
+    </a>
+    <a href="#" class="tab-item">
+        最热
+        <i class="fas fa-fire hot-icon"></i>
+    </a>
+    <a href="#" class="tab-item">收藏</a>
+    <a href="#" class="tab-item">政企增效</a>
+    <a href="#" class="tab-item">业财融合</a>
+    <a href="#" class="tab-item">运维数智</a>
+    <a href="#" class="tab-item">研发提效</a>
+</div>
+
+<!-- 内容区 - 空状态 -->
+<div class="content-area">
+    <div class="empty-state">
+        <img src="{{ url_for('static', path='/images/home/empty.svg') }}" alt="没有数据" class="empty-img">
+        <p class="empty-text">没有什么数据呢~</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// 页面加载完成后设置当前页面的活动菜单项
+document.addEventListener('DOMContentLoaded', function() {
+    // 等待侧边栏管理器初始化完成
+    setTimeout(() => {
+        if (window.sidebarManager) {
+            window.sidebarManager.setActiveMenuByPage('dashboard');
+        }
+    }, 100);
+});
+
+// 设置分类标签点击事件
+document.addEventListener('DOMContentLoaded', function() {
+    const tabItems = document.querySelectorAll('.category-tabs .tab-item');
+    tabItems.forEach(tab => {
+        tab.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // 移除所有活动状态
+            tabItems.forEach(t => t.classList.remove('active'));
+            
+            // 设置当前选中状态
+            this.classList.add('active');
+            
+            // 这里可以添加加载对应分类内容的逻辑
+        });
+    });
+});
+</script>
+{% endblock %} 

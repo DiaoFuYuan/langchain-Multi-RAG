@@ -1,0 +1,147 @@
+# ===== 核心Web框架 =====
+fastapi==0.115.6
+uvicorn==0.24.0
+starlette==0.27.0
+pydantic==2.10.4
+pydantic-core==2.27.2
+pydantic-settings==2.7.1
+
+# ===== HTTP客户端和服务器 =====
+httpx==0.28.1
+httpcore==1.0.7
+h11==0.14.0
+anyio==4.7.0
+sniffio==1.3.1
+
+# ===== 模板和静态文件 =====
+jinja2==3.1.4
+aiofiles==24.1.0
+python-multipart==0.0.17
+
+# ===== 数据库相关 =====
+sqlalchemy==2.0.36
+alembic==1.14.0
+pymysql==1.1.1
+cryptography==44.0.0
+
+# ===== 认证和安全 =====
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+bcrypt==4.2.1
+
+# ===== 配置管理 =====
+python-dotenv==1.0.1
+PyYAML==6.0.2
+
+# ===== LangChain核心框架 =====
+langchain==0.3.13
+langchain-core==0.3.28
+langchain-community==0.3.13
+langchain-text-splitters==0.3.4
+
+# ===== LangChain集成 =====
+langchain-openai==0.2.14
+langchain-huggingface==0.1.2
+langchain-zhipuai==0.0.1
+
+# ===== 大语言模型API =====
+openai==1.58.1
+zhipuai==2.1.5.20250421
+
+# ===== 向量数据库和嵌入模型 =====
+# faiss-gpu==1.9.0  # 通过 conda install -c conda-forge faiss-gpu 安装
+pymilvus==2.5.4
+sentence-transformers==3.3.1
+
+# ===== 机器学习和深度学习 =====
+torch==2.5.1+cu121
+transformers==4.51.3
+numpy==1.26.4
+scikit-learn==1.6.0
+
+# ===== 文档处理核心 =====
+unstructured==0.17.2
+python-docx==1.1.2
+python-pptx==1.0.2
+pypdf==5.1.0
+PyPDF2==3.0.1
+
+# ===== OCR和图像处理 =====
+rapidocr-onnxruntime==1.4.4
+opencv-python==4.10.0.84
+pillow==11.0.0
+pdf2image==1.17.0
+onnxruntime==1.20.1
+
+# ===== 中文文本处理 =====
+jieba==0.42.1
+langdetect==1.0.9
+nltk==3.9.1
+
+# ===== 搜索和排序 =====
+rank-bm25==0.2.2
+rapidfuzz==3.10.1
+
+# ===== 文档解析和处理 =====
+beautifulsoup4==4.12.3
+lxml==5.3.0
+html5lib==1.1
+chardet==5.2.0
+filetype==1.2.0
+python-magic==0.4.27
+
+# ===== 数据处理 =====
+pandas==2.2.3
+tabulate==0.9.0
+emoji==2.14.0
+dataclasses-json==0.6.7
+
+# ===== 工具库 =====
+tqdm==4.67.1
+tenacity==8.5.0
+backoff==2.2.1
+typer==0.15.2
+click==8.1.7
+shellingham==1.5.4
+
+# ===== 系统和进程管理 =====
+psutil==6.1.0
+gitpython==3.1.43
+gitdb==4.0.11
+smmap==5.0.1
+
+# ===== 日志和调试 =====
+coloredlogs==15.0.1
+rich==13.9.4
+
+# ===== 文档和解析 =====
+markdown==3.7
+markdown-it-py==3.0.0
+mdurl==0.1.2
+pygments==2.18.0
+docstring-parser==0.16
+
+# ===== 序列化和编码 =====
+orjson==3.10.12
+tomli==2.2.1
+
+# ===== 类型检查和注解 =====
+typing-extensions==4.13.2
+annotated-types==0.7.0
+
+# ===== 网络和验证 =====
+email-validator==2.2.0
+certifi==2024.12.14
+idna==3.10
+
+# ===== 异常处理 =====
+exceptiongroup==1.2.2
+
+# ===== HTTP请求 =====
+requests==2.32.3
+
+# ===== SSE支持 =====
+sse-starlette==2.3.4
+
+
+

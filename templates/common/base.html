@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}智能体平台{% endblock %}</title>
+    
+    <!-- 公共CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', path='/css/home/index.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='/css/common/notification.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <!-- 页面特定CSS -->
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <header class="header">
+        <div class="header-left">
+            <div class="logo">
+                <img src="{{ url_for('static', path='/images/home/logo.png') }}" alt="青创之家" class="logo-img">
+                <span class="logo-text">青创之家</span>
+            </div>
+            <div class="nav-links" id="navLinks">
+                <!-- 导航链接将由JavaScript动态更新 -->
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="language-selector">
+                <i class="fas fa-globe"></i>
+                <span>简体中文</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="team-selector">
+                <span>QChometeam</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="user-info">
+                <i class="fas fa-user-circle"></i>
+                <span>admin</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- 包含公共侧边栏 -->
+    {% include 'common/sidebar.html' %}
+
+    <!-- 主内容区 -->
+    <main class="main-content" id="mainContent">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- 公共JavaScript -->
+    <script src="{{ url_for('static', path='/js/common/sidebar.js') }}"></script>
+    <script src="{{ url_for('static', path='/js/common/notification.js') }}"></script>
+    
+    <!-- 页面特定JavaScript -->
+    {% block extra_js %}{% endblock %}
+</body>
+</html> 
