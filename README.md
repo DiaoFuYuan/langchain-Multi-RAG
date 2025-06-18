@@ -180,12 +180,13 @@ EMBEDDING_MODEL_PATH=./dfy_langchain/embedding_model/bce-embedding-base_v1
 
 如果您遇到问题或有建议，请：
 - 提交 [Issue](../../issues)
-- 发送邮件至: [your-email@example.com]
+- 发送邮件至: [992697817@qq.com]
 - 查看 [文档](./docs/)
 
 ## 🙏 致谢
 
 感谢以下开源项目的支持：
+- [Langchatchat](https://github.com/langchatchat/langchatchat)
 - [FastAPI](https://fastapi.tiangolo.com/)
 - [LangChain](https://python.langchain.com/)
 - [Chroma](https://www.trychroma.com/)
@@ -194,3 +195,25 @@ EMBEDDING_MODEL_PATH=./dfy_langchain/embedding_model/bce-embedding-base_v1
 ---
 
 ⭐ 如果这个项目对您有帮助，请给我们一个星标！
+
+
+## 📸 界面展示
+
+### 主界面
+![主界面](docs/image1.png)
+
+### 智能对话界面
+![智能对话界面](docs/image2.png)
+
+### 知识库管理
+![知识库管理](docs/image3.png)
+
+### 文档上传与处理
+![文档上传与处理](docs/image4.png)
+
+### 系统配置
+![系统配置](docs/image5.png)
+
+### 检索结果展示
+![检索结果展示](docs/image6.png)
+
